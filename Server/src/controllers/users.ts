@@ -7,6 +7,10 @@ import jwt from "jsonwebtoken";
 import env from "../utils/validateEnv";
 import { validateUser } from "../utils/validateUser";
 import mongoose from "mongoose";
+import axios from "axios";
+
+const GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = env.GITHUB_CLIENT_SECRET;
 
 export interface signUpBody {
   username: string;
@@ -90,6 +94,53 @@ export const getLoggedInUser: RequestHandler = async (req, res, next) => {
     if (!user) throw createHttpError(404, "User not found");
 
     res.status(200).json({ user });
+  } catch (er) {
+    next(er);
+  }
+};
+
+export const authWithGithub: RequestHandler = async (req, res, next) => {
+  const { code } = req.query;
+  try {
+    if (!code) throw createHttpError(404, "Code not provided");
+    const requestUrl = "https://github.com/login/oauth/access_token";
+    const params = new URLSearchParams({
+      client_id: GITHUB_CLIENT_ID,
+      client_secret: GITHUB_CLIENT_SECRET,
+      code: code as string,
+    }).toString();
+
+    const response = await axios.post(requestUrl, params, {
+      headers: {
+        Accept: "application/json", // Request JSON response
+      },
+    });
+    const access_token = response.data.access_token;
+
+    const response2 = await axios.get("https://api.github.com/user", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    const user = response2.data;
+    const existingUser = await UserModel.findOne()
+      .or([{ username: user.login }, { email: user.email }])
+      .exec();
+    if (existingUser)
+      return res.status(200).json({ message: "Login successful", user });
+    else {
+      const passwordHashed = await bcrypt.hash("auth_Password@123", 10);
+      const newUser = await UserModel.create({
+        username: user.login,
+        email: user.email,
+        password: passwordHashed,
+      });
+      sendCookie(newUser._id, res);
+      res
+        .status(201)
+        .json({ message: "User registered successfully", user: newUser });
+    }
   } catch (er) {
     next(er);
   }

@@ -9,4 +9,8 @@ export default cleanEnv(process.env, {
   PORT: port(),
   MONGO_URI: str(),
   JWT_SECRET: str(),
+  GITHUB_CLIENT_ID: str(),
+  GITHUB_CLIENT_SECRET: str(),
+  GOOGLE_CLIENT_ID: str(),
+  GOOGLE_CLIENT_SECRET: str(),
 });

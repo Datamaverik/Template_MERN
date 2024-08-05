@@ -13,7 +13,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import * as userApi from "../services/users";
+import { FaGithub } from "react-icons/fa6";
 import { useLoggedInUser } from "../hooks/useLoggInUser";
+import { useEffect } from "react";
 
 const schema = z.object({
   username: z
@@ -38,6 +40,8 @@ interface loginProps {
   onSuccessfulLogin: () => void;
 }
 
+const CLIENT_ID = "Ov23liqCybNboghZLnRs";
+
 const Login = ({ onSuccessfulLogin }: loginProps) => {
   const toast = useToast();
   const { setCurrentUser } = useLoggedInUser();
@@ -48,6 +52,12 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
   } = useForm<formData>({ resolver: zodResolver(schema) });
 
   const { colorMode } = useColorMode();
+
+  const loginWithGithub = () => {
+    window.location.assign(
+      "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
+    );
+  };
 
   const onSubmit: SubmitHandler<formData> = async (data) => {
     try {
@@ -74,6 +84,33 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
       });
     }
   };
+
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const codeParam = urlParams.get("code");
+    console.log(codeParam);
+    const GithubCallback = async () => {
+      try {
+        const response = await userApi.authWithGithub(codeParam!);
+        console.log(response);
+        onSuccessfulLogin();
+        setCurrentUser(response);
+        toast({
+          position: "top-right",
+          title: "Login successful",
+          description: `${response.message}`,
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      } catch (er) {
+        console.log(er);
+      }
+    };
+    GithubCallback();
+  }, []);
+
   return (
     <GridItem area="main" zIndex="1" alignSelf="center" m="1rem">
       <Container
@@ -81,6 +118,17 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
         p="20px"
         borderRadius="10px"
       >
+        <Button
+          onClick={loginWithGithub}
+          size="lg"
+          ml="50%"
+          transform="translateX(-50%)"
+          leftIcon={<FaGithub />}
+          colorScheme="teal"
+          variant="ghost"
+        >
+          Log in with Github
+        </Button>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl isInvalid={errors.username ? true : false}>
             <FormLabel>Username</FormLabel>

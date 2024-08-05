@@ -11,4 +11,6 @@ router.post("/logout", UserController.logout);
 
 router.get("/loggedInUser", UserController.getLoggedInUser);
 
+router.get("/auth",UserController.authWithGithub);
+
 export default router;
