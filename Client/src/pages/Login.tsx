@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import * as userApi from "../services/users";
 import { FaGithub } from "react-icons/fa6";
+import { FaGoogle } from "react-icons/fa6";
 import { useLoggedInUser } from "../hooks/useLoggInUser";
 import { useEffect } from "react";
 
@@ -40,7 +41,9 @@ interface loginProps {
   onSuccessfulLogin: () => void;
 }
 
-const CLIENT_ID = "Ov23liqCybNboghZLnRs";
+const GITHUB_CLIENT_ID = "Ov23liqCybNboghZLnRs";
+const GOOGLE_CLIENT_ID =
+  "527880605810-penqdp4ejhfdc8mp53ddoh59samleqai.apps.googleusercontent.com";
 
 const Login = ({ onSuccessfulLogin }: loginProps) => {
   const toast = useToast();
@@ -55,7 +58,14 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
 
   const loginWithGithub = () => {
     window.location.assign(
-      "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
+      "https://github.com/login/oauth/authorize?client_id=" + GITHUB_CLIENT_ID
+    );
+  };
+
+  const loginWithGoogle = () => {
+    window.location.assign(
+      "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
+        GOOGLE_CLIENT_ID
     );
   };
 
@@ -93,9 +103,9 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
     const GithubCallback = async () => {
       try {
         const response = await userApi.authWithGithub(codeParam!);
-        console.log(response);
+        console.log(response.user);
         onSuccessfulLogin();
-        setCurrentUser(response);
+        setCurrentUser(response.user);
         toast({
           position: "top-right",
           title: "Login successful",
@@ -128,6 +138,17 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
           variant="ghost"
         >
           Log in with Github
+        </Button>
+        <Button
+          onClick={loginWithGoogle}
+          size="lg"
+          ml="50%"
+          transform="translateX(-50%)"
+          leftIcon={<FaGoogle />}
+          colorScheme="teal"
+          variant="ghost"
+        >
+          Log in with Google
         </Button>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl isInvalid={errors.username ? true : false}>

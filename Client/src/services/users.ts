@@ -70,7 +70,7 @@ export const getLoggedInUser = async () => {
 export const authWithGithub = async (code: string) => {
   try {
     const response = await api.get(`/users/auth?code=${code}`);
-    return response.data.user;
+    return response.data;
   } catch (er) {
     if (er instanceof AxiosError) {
       console.error(er.response?.data.message);

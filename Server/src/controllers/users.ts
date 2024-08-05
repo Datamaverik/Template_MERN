@@ -127,9 +127,12 @@ export const authWithGithub: RequestHandler = async (req, res, next) => {
     const existingUser = await UserModel.findOne()
       .or([{ username: user.login }, { email: user.email }])
       .exec();
-    if (existingUser)
-      return res.status(200).json({ message: "Login successful", user });
-    else {
+    if (existingUser) {
+      sendCookie(existingUser._id, res);
+      return res
+        .status(200)
+        .json({ message: "Login successful", user: existingUser });
+    } else {
       const passwordHashed = await bcrypt.hash("auth_Password@123", 10);
       const newUser = await UserModel.create({
         username: user.login,
@@ -137,7 +140,7 @@ export const authWithGithub: RequestHandler = async (req, res, next) => {
         password: passwordHashed,
       });
       sendCookie(newUser._id, res);
-      res
+      return res
         .status(201)
         .json({ message: "User registered successfully", user: newUser });
     }
