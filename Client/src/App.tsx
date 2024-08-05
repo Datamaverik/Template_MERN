@@ -2,12 +2,11 @@ import "./App.css";
 import * as UserApi from "./services/users";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
-import HomeLayout from "./pages/HomeLayout";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/Signup";
 import NotFoundPage from "./pages/NotFoundPage";
 import Login from "./pages/Login";
-import { GridItem, useToast } from "@chakra-ui/react";
+import { Grid, GridItem, useToast } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useLoggedInUser } from "./hooks/useLoggInUser";
 import Navbar from "./components/Navbar";
@@ -46,13 +45,19 @@ function App() {
   }, []);
 
   return (
-    <>
+    <Grid
+      templateAreas={`"nav nav"
+                      "main main"`}
+      gridTemplateRows={"auto 1fr"}
+      templateColumns={"300px 1fr"}
+      h="100vh"
+    >
       <GridItem area="nav" zIndex="1">
         <Navbar />
       </GridItem>
       <Routes>
         <Route element={<PrivateRoute />}>
-          <Route path="/" element={<HomeLayout />} />
+          <Route path="/" />
           <Route path="/dashboard" element={<Dashboard />} />
           {/* rest of the protected routes */}
         </Route>
@@ -68,7 +73,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-    </>
+    </Grid>
   );
 }
 

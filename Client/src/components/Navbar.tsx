@@ -47,7 +47,7 @@ const Navbar = () => {
   };
   return (
     <Flex
-      p={5}
+      p={3}
       bgGradient="linear(to-l,blue.700,blue.400)"
       justifyContent="space-between"
       boxShadow="md"

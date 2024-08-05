@@ -85,15 +85,12 @@ const Signup = ({ onSuccessfulSignup }: signupProps) => {
   };
 
   return (
-    <GridItem
-      area="main"
-      zIndex="1"
-      m="1rem"
-      display="flex"
-      bgColor="red"
-    >
+    <GridItem area="main" zIndex="1" alignSelf="center" m="1rem">
       <Container
-        bgColor={colorMode === "dark" ? "gray.700" : "gray.100"}
+        bgColor={colorMode === "dark" ? "gray.700" : "#f1f1f1"}
+        boxShadow={
+          colorMode === "dark" ? "0px 0px 5px gray.100 " : "0px 0px 5px #969696"
+        }
         p="20px"
         borderRadius="10px"
       >
