@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import * as userApi from "../services/users";
 import { FaGithub } from "react-icons/fa6";
-import { FaGoogle } from "react-icons/fa6";
+// import { FaGoogle } from "react-icons/fa6";
 import { useLoggedInUser } from "../hooks/useLoggInUser";
 import { useEffect } from "react";
 
@@ -42,8 +42,8 @@ interface loginProps {
 }
 
 const GITHUB_CLIENT_ID = "Ov23liqCybNboghZLnRs";
-const GOOGLE_CLIENT_ID =
-  "527880605810-penqdp4ejhfdc8mp53ddoh59samleqai.apps.googleusercontent.com";
+// const GOOGLE_CLIENT_ID =
+  // "527880605810-penqdp4ejhfdc8mp53ddoh59samleqai.apps.googleusercontent.com";
 
 const Login = ({ onSuccessfulLogin }: loginProps) => {
   const toast = useToast();
@@ -62,12 +62,12 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
     );
   };
 
-  const loginWithGoogle = () => {
-    window.location.assign(
-      "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
-        GOOGLE_CLIENT_ID
-    );
-  };
+  // const loginWithGoogle = () => {
+    // window.location.assign(
+      // "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
+        // GOOGLE_CLIENT_ID
+    // );
+  // };
 
   const onSubmit: SubmitHandler<formData> = async (data) => {
     try {
@@ -138,17 +138,6 @@ const Login = ({ onSuccessfulLogin }: loginProps) => {
           variant="ghost"
         >
           Log in with Github
-        </Button>
-        <Button
-          onClick={loginWithGoogle}
-          size="lg"
-          ml="50%"
-          transform="translateX(-50%)"
-          leftIcon={<FaGoogle />}
-          colorScheme="teal"
-          variant="ghost"
-        >
-          Log in with Google
         </Button>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl isInvalid={errors.username ? true : false}>
